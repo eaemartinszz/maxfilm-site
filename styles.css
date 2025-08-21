@@ -218,3 +218,32 @@ footer{border-top:1px solid var(--border);padding:24px 0;color:#b6c2cf}
 /* Se quiser ainda mais espaço, teste 36px:
 .plans-wrap{ margin-top: 36px; }
 */
+
+/* Preenche a altura da tela no mobile e organiza o fluxo */
+html, body{ min-height:100%; }
+body{ min-height:100dvh; display:flex; flex-direction:column; }
+main{ flex:1 0 auto; }
+
+/* Altura dinâmica do hero = 100vh - header (com fallbacks para diferentes viewports) */
+:root{ --header-h: 72px; } /* fallback; o JS ajusta o valor real */
+
+@media (max-width: 980px){
+  /* Usa dvh/svh quando disponível (corrige barras do navegador no iOS/Android) */
+  .hero{
+    min-height: calc(100vh - var(--header-h));
+    padding-block: clamp(16px, 6vh, 32px);
+  }
+  @supports (height: 100svh){
+    .hero{ min-height: calc(100svh - var(--header-h)); }
+  }
+  @supports (height: 100dvh){
+    .hero{ min-height: calc(100dvh - var(--header-h)); }
+  }
+
+  /* Faz a vitrine ter altura confortável no mobile */
+  .illus{ min-height: clamp(260px, 48vh, 520px); }
+
+  /* Pequenos ajustes de respiro geral */
+  section{ padding-block: clamp(20px, 6vh, 40px); }
+  .container{ padding-left:16px; padding-right:16px; }
+}

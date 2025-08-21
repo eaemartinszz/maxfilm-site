@@ -245,3 +245,20 @@ if (btn && menu){
   // Inicializa
   apply();
 })();
+
+// Ajusta a variável --header-h com a altura real do header (para o hero ocupar a tela)
+(function(){
+  const root = document.documentElement;
+  const header = document.querySelector('header');
+  if (!header) return;
+
+  function setHeaderH(){
+    const h = header.offsetHeight || 0;
+    root.style.setProperty('--header-h', h + 'px');
+  }
+  window.addEventListener('load', setHeaderH);
+  window.addEventListener('resize', setHeaderH);
+  // Em alguns navegadores móveis, o resize não dispara ao abrir/fechar barra de endereço.
+  // Força um ajuste extra após um pequeno delay.
+  setTimeout(setHeaderH, 300);
+})();
