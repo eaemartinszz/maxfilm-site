@@ -1,37 +1,25 @@
-// Ano automático no rodapé
+// Ano automático
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-// Menu mobile/desktop com classe .open e fechamento inteligente
-const btn = document.querySelector('.menu-btn');
-const menu = document.getElementById('menu');
-const mql = window.matchMedia('(max-width: 980px)');
+// Ajusta --vh (altura real da viewport) e --header-h (altura do header)
+(function(){
+  const root = document.documentElement;
+  const header = document.querySelector('header');
 
-function closeMenu(){
-  if (!menu) return;
-  menu.classList.remove('open');
-  if (btn) btn.setAttribute('aria-expanded','false');
-}
+  function setVH(){ root.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px'); }
+  function setHeaderH(){ root.style.setProperty('--header-h', (header ? header.offsetHeight : 0) + 'px'); }
 
-if (btn && menu){
-  btn.addEventListener('click', () => {
-    const isOpen = menu.classList.toggle('open');
-    btn.setAttribute('aria-expanded', String(isOpen));
-  });
-  document.addEventListener('click', (e) => {
-    if (!mql.matches) return;
-    if (!menu.contains(e.target) && !btn.contains(e.target)) closeMenu();
-  });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
-  window.addEventListener('resize', () => { if (!mql.matches) closeMenu(); });
-}
+  ['load','resize','orientationchange'].forEach(evt => window.addEventListener(evt, () => { setVH(); setHeaderH(); }));
+  setTimeout(() => { setVH(); setHeaderH(); }, 120); // ajuste extra p/ iOS
+})();
 
-// ===== Animações (intensas) =====
+// Animações (mesmas do pacote anterior, resumidas)
 (function(){
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (prefersReduced) return;
 
-  // Barra de progresso de scroll
+  // Barra de progresso
   const bar = document.createElement('div');
   bar.className = 'scroll-progress';
   document.body.appendChild(bar);
@@ -48,7 +36,7 @@ if (btn && menu){
   }, { passive: true });
   updateBar();
 
-  // Reveal on scroll
+  // Reveal
   function addReveal(selector, cls = 'reveal-up', { stagger = 120, startDelay = 0 } = {}){
     const els = document.querySelectorAll(selector);
     els.forEach((el, i) => {
@@ -83,7 +71,7 @@ if (btn && menu){
   addReveal('footer .links a','reveal-up',{stagger:60});
   addReveal('footer .legal','reveal-fade',{startDelay:220});
 
-  // Tilt + parallax na vitrine do hero
+  // Tilt + parallax na vitrine
   const illus = document.querySelector('.illus');
   const media = document.querySelector('.illus-media');
   if (illus){
@@ -97,9 +85,7 @@ if (btn && menu){
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
         illus.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
-        if (media){
-          media.style.transform = `translate3d(${ry * 1.5}px, ${rx * 1.5}px, 0) scale(1.03)`;
-        }
+        if (media){ media.style.transform = `translate3d(${ry * 1.5}px, ${rx * 1.5}px, 0) scale(1.03)`; }
       });
     });
     illus.addEventListener('mouseleave', () => {
@@ -117,7 +103,7 @@ if (btn && menu){
     }, { passive: true });
   }
 
-  // Ripple em botões
+  // Ripple
   document.querySelectorAll('.btn').forEach(b => {
     b.addEventListener('click', (e) => {
       const rect = b.getBoundingClientRect();
@@ -131,7 +117,7 @@ if (btn && menu){
   });
 })();
 
-// ===== Carrossel dos planos com animação orgânica (FLIP) =====
+// Carrossel dos planos (FLIP + autoplay)
 (function(){
   const wrap = document.querySelector('.plans-wrap');
   const rail = document.querySelector('.plans-rail');
@@ -144,12 +130,11 @@ if (btn && menu){
   const dots = Array.from(wrap.querySelectorAll('.plans-dots .dot'));
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  let active = 1;          // começa com o segundo no centro
-  let prevActive = active; // guarda anterior
+  let active = 1;
+  let prevActive = active;
   let autoTimer = null;
   const interval = parseInt(wrap.getAttribute('data-autoplay') || '6000', 10);
 
-  // FLIP
   function flipAnimate(elements, mutate){
     if (prefersReduced) { mutate(); return; }
     const first = elements.map(el => el.getBoundingClientRect());
@@ -162,10 +147,7 @@ if (btn && menu){
       const sy = first[i].height / last.height;
       const dist = Math.hypot(dx, dy);
       const dur = Math.max(350, Math.min(900, dist));
-      el.animate([
-        { transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})` },
-        { transform: 'none' }
-      ], { duration: dur, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' });
+      el.animate([{ transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})` },{ transform:'none'}],{ duration:dur, easing:'cubic-bezier(.22,1,.36,1)', fill:'both' });
     });
   }
 
@@ -173,7 +155,7 @@ if (btn && menu){
     const n = cards.length;
     flipAnimate(cards, () => {
       cards.forEach((card, i) => {
-        const pos = (i - active + n) % n; // 0=left, 1=center, 2=right
+        const pos = (i - active + n) % n; // 0=left,1=center,2=right
         card.style.order = String(pos);
         card.classList.toggle('is-center', pos === 1);
         card.classList.toggle('is-left',   pos === 0);
@@ -183,7 +165,6 @@ if (btn && menu){
       });
     });
 
-    // Dots
     dots.forEach((d, i) => {
       const selected = i === active;
       d.classList.toggle('is-active', selected);
@@ -191,12 +172,11 @@ if (btn && menu){
       d.tabIndex = selected ? 0 : -1;
     });
 
-    // Pop+glow para o novo centro
     if (active !== prevActive){
       const centerEl = rail.querySelector('.card.is-center');
       if (centerEl){
         centerEl.classList.remove('center-enter');
-        void centerEl.offsetWidth; // reflow
+        void centerEl.offsetWidth;
         centerEl.classList.add('center-enter');
       }
       prevActive = active;
@@ -211,7 +191,6 @@ if (btn && menu){
     apply();
   }
 
-  // Controles
   btnPrev?.addEventListener('click', () => rotate(-1));
   btnNext?.addEventListener('click', () => rotate(1));
   dots.forEach((dot, i) => {
@@ -221,7 +200,6 @@ if (btn && menu){
     });
   });
 
-  // Auto-rotate sempre ligado (pausa em hover/focus)
   const alwaysOn = wrap.dataset.autoAlways === 'true';
   function startAuto(){ if (prefersReduced || autoTimer) return; autoTimer = setInterval(() => rotate(1), interval); }
   function stopAuto(){ if (autoTimer) { clearInterval(autoTimer); autoTimer = null; } }
@@ -232,9 +210,8 @@ if (btn && menu){
   wrap.addEventListener('focusin', stopAuto);
   wrap.addEventListener('focusout', startAuto);
 
-  if (alwaysOn){
-    setTimeout(startAuto, 600);
-  } else {
+  if (alwaysOn){ setTimeout(startAuto, 600); }
+  else {
     const section = document.getElementById('planos')?.closest('section') || document.getElementById('planos');
     const io = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
       entries.forEach(entry => entry.isIntersecting ? startAuto() : stopAuto());
@@ -242,23 +219,5 @@ if (btn && menu){
     io?.observe(section || wrap);
   }
 
-  // Inicializa
   apply();
-})();
-
-// Ajusta a variável --header-h com a altura real do header (para o hero ocupar a tela)
-(function(){
-  const root = document.documentElement;
-  const header = document.querySelector('header');
-  if (!header) return;
-
-  function setHeaderH(){
-    const h = header.offsetHeight || 0;
-    root.style.setProperty('--header-h', h + 'px');
-  }
-  window.addEventListener('load', setHeaderH);
-  window.addEventListener('resize', setHeaderH);
-  // Em alguns navegadores móveis, o resize não dispara ao abrir/fechar barra de endereço.
-  // Força um ajuste extra após um pequeno delay.
-  setTimeout(setHeaderH, 300);
 })();
