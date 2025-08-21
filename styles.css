@@ -8,27 +8,26 @@
   --ring: rgb(34 197 94 / .35);
   --border: rgb(27,39,51);
   --accent: rgb(56,189,248);
-  --warning: rgb(245,158,11);
   --lead: rgb(201,214,226);
-  --surface-800: rgb(15,27,40);
-  --surface-850: rgb(13,26,41);
-  --surface-900: rgb(11,22,34);
-
   --maxw: 1200px;
   --radius: 14px;
 
-  /* Alturas (ajustadas via JS) */
+  /* Altura do header (JS preenche o valor real) */
   --header-h: 72px;
-  --vh: 1vh;
+  /* Altura da viewport (controlada via @supports e JS) */
+  --vh100: 100vh;
 }
+/* Preferir SVH/DVH quando houver suporte */
+@supports (height: 100svh){ :root{ --vh100: 100svh; } }
+@supports (height: 100dvh){ :root{ --vh100: 100dvh; } }
 
 /* Base */
 *{box-sizing:border-box}
 html,body{
   margin:0;padding:0;
-  background: linear-gradient(180deg, rgb(7,16,24) 0%, rgb(11,18,32) 100%);
-  color: var(--text);
-  font: 400 16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji";
+  background:linear-gradient(180deg, rgb(7,16,24) 0%, rgb(11,18,32) 100%);
+  color:var(--text);
+  font:400 16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji";
 }
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
@@ -39,7 +38,7 @@ header{
   position:sticky;top:0;z-index:50;
   background: rgb(11 15 20 / .7);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
+  border-bottom:1px solid var(--border);
   padding-top: env(safe-area-inset-top, 0px);
 }
 .nav{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;position:relative;padding:14px 0}
@@ -54,15 +53,15 @@ header .nav > a.btn{justify-self:end}
 /* Buttons */
 .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;background:var(--primary);color:rgb(4,34,18);font-weight:700;border:1px solid transparent;box-shadow:0 8px 24px rgb(34 197 94 / .25);transition:transform .08s ease, box-shadow .2s ease}
 .btn:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgb(34 197 94 / .3)}
-.btn.secondary{background:var(--surface-900);border-color:var(--border);color:var(--text);box-shadow:none}
-.btn.secondary:hover{background:var(--surface-850)}
-.whats{width:18px;height:18px;display:inline-block;border-radius:999px;background: rgb(37,211,102);box-shadow:0 0 0 3px rgb(37 211 102 / .18)}
+.btn.secondary{background:rgb(11,22,34);border-color:var(--border);color:var(--text);box-shadow:none}
+.btn.secondary:hover{background:rgb(13,26,41)}
+.whats{width:18px;height:18px;display:inline-block;border-radius:999px;background:rgb(37,211,102);box-shadow:0 0 0 3px rgb(37 211 102 / .18)}
 
-/* Hero (altura total no mobile com ordem correta de fallbacks) */
-.hero{padding:56px 0 24px;min-height:calc((var(--vh) * 100) - var(--header-h))}
-@supports (height: 100svh){ .hero{min-height:calc(100svh - var(--header-h))} }
-@supports (height: 100dvh){ .hero{min-height:calc(100dvh - var(--header-h))} }
-
+/* Hero */
+.hero{
+  padding:56px 0 24px;
+  min-height: calc(var(--vh100) - var(--header-h));
+}
 .hero-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center}
 .kicker{color:var(--accent);font-weight:700;letter-spacing:.6px;text-transform:uppercase;font-size:12px}
 h1{margin:6px 0 10px;font-size:42px;line-height:1.15}
@@ -70,13 +69,12 @@ h1{margin:6px 0 10px;font-size:42px;line-height:1.15}
 .hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
 .badges{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
 .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px dashed rgb(31,44,58);border-radius:999px;color:var(--lead);background:rgb(255 255 255 / .03)}
-
 .illus{
   min-height:260px;border:1px solid var(--border);border-radius:18px;
   background:
     radial-gradient(1200px 420px at 20% 0%, rgb(34 197 94 / .12), transparent 60%),
     radial-gradient(1000px 360px at 100% 0%, rgb(56 189 248 / .14), transparent 60%),
-    var(--surface-800);
+    rgb(15,27,40);
   display:grid;place-items:center;position:relative;overflow:hidden
 }
 .illus::after{content:"";position:absolute;inset:0;background:
@@ -88,7 +86,7 @@ section{padding:40px 0}
 .section-title{font-size:28px;margin:0 0 8px}
 .section-sub{color:var(--lead);margin-bottom:20px}
 
-/* Grids e cartões */
+/* Grid e cards */
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
 .card .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
@@ -97,23 +95,21 @@ section{padding:40px 0}
 .per{color:var(--muted);font-size:14px}
 .features{margin:12px 0 14px;padding:0;list-style:none;display:grid;gap:8px}
 .features li{display:flex;align-items:flex-start;gap:10px}
-.check{width:18px;height:18px;border-radius:999px;background:linear-gradient(135deg, rgb(34,197,94), rgb(52,211,153));display:inline-grid;place-items:center;color: rgb(0,85,34)}
+.check{width:18px;height:18px;border-radius:999px;background:linear-gradient(135deg, rgb(34,197,94), rgb(52,211,153));display:inline-grid;place-items:center;color:rgb(5,82,34)}
 .save{color:rgb(158,241,185);font-weight:700;font-size:13px}
 .notice{font-size:12px;color:var(--muted);margin-top:10px}
 
-/* Steps e vantagens */
+/* Steps, vantagens, FAQ */
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .step{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
 .step-num{width:26px;height:26px;border-radius:999px;background:rgb(18,32,45);color:rgb(162,229,255);display:grid;place-items:center;font-weight:800;font-size:12px}
 .list{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
-
-/* FAQ */
 details{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px}
 details+details{margin-top:10px}
 summary{cursor:pointer;font-weight:700}
 
-/* Contato / Footer */
+/* Footer */
 .cta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 footer{border-top:1px solid var(--border);padding:24px 0;color:rgb(182,194,207)}
 .foot{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
@@ -122,7 +118,8 @@ footer{border-top:1px solid var(--border);padding:24px 0;color:rgb(182,194,207)}
 
 /* Mobile */
 @media (max-width: 980px){
-  .hero-inner{grid-template-columns:1fr}
+  .hero{display:flex;align-items:center}
+  .hero-inner{grid-template-columns:1fr;gap:16px}
   .grid{grid-template-columns:1fr}
   .steps{grid-template-columns:1fr 1fr}
   .list{grid-template-columns:1fr}
@@ -130,8 +127,8 @@ footer{border-top:1px solid var(--border);padding:24px 0;color:rgb(182,194,207)}
   .menu{display:flex !important;gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:6px 0}
   .menu li{flex:0 0 auto}
 
-  .illus{min-height:clamp(260px,48vh,520px)}
-  section{padding-block:clamp(20px,6vh,40px)}
+  .illus{min-height:clamp(260px, 48vh, 520px)}
+  section{padding-block:clamp(20px, 6vh, 40px)}
   .container{padding-inline:16px}
 }
 
@@ -139,47 +136,24 @@ footer{border-top:1px solid var(--border);padding:24px 0;color:rgb(182,194,207)}
 :focus-visible{outline:3px solid var(--ring);outline-offset:2px;border-radius:8px}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-/* Animações resumidas (já testadas) */
+/* Animações (resumo) */
 :root{--ease-out:cubic-bezier(.22,1,.36,1);--ease-out-back:cubic-bezier(.34,1.56,.64,1)}
-.btn{position:relative;overflow:hidden;transition:transform .28s var(--ease-out-back),box-shadow .32s var(--ease-out),background-color .2s,color .2s,border-color .2s}
+.btn{position:relative;overflow:hidden;transition:transform .28s var(--ease-out-back),box-shadow .32s var(--ease-out)}
 .btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 14px 34px rgb(34 197 94 / .25)}
 .badge{transition:transform .25s var(--ease-out)}
 .badge:hover{transform:translateY(-2px)}
-.card{transition:transform .5s var(--ease-out-back),box-shadow .5s var(--ease-out),border-color .35s}
-.card:hover{transform:translateY(-10px) scale(1.03);box-shadow:0 22px 60px rgb(0 0 0 / .45);border-color:rgb(56 189 248 / .28)}
-.item,.step{transition:transform .45s var(--ease-out-back),box-shadow .4s var(--ease-out)}
-.item:hover,.step:hover{transform:translateY(-8px);box-shadow:0 14px 36px rgb(0 0 0 / .35)}
+.card{transition:transform .5s var(--ease-out-back),box-shadow .5s var(--ease-out)}
+.card:hover{transform:translateY(-10px) scale(1.03);box-shadow:0 22px 60px rgb(0 0 0 / .45)}
 @media (min-width:981px){
   .menu a{position:relative}
   .menu a::after{content:"";position:absolute;left:8px;right:8px;bottom:-4px;height:2px;background:linear-gradient(90deg,var(--accent),var(--primary));transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease-out-back);opacity:.9}
   .menu a:hover::after{transform:scaleX(1)}
 }
-@keyframes pulseRing{0%{box-shadow:0 0 0 0 rgb(37 211 102 / .35)}100%{box-shadow:0 0 0 14px rgb(37 211 102 / 0)}}
-.whats{animation:pulseRing 1.6s ease-out infinite}
-@keyframes floatBg{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
-.illus{animation:floatBg 8s ease-in-out infinite}
-.illus::after{animation:gridDrift 18s linear infinite}
-@keyframes gridDrift{0%{transform:translateX(-10px);opacity:.08}50%{transform:translateX(10px);opacity:.12}100%{transform:translateX(-10px);opacity:.08}}
-
-.reveal-up,.reveal-right,.reveal-zoom,.reveal-fade{opacity:0;will-change:transform,opacity,filter}
-.reveal-up{transform:translateY(28px) scale(.98)}
-.reveal-right{transform:translateX(32px) scale(.98)}
-.reveal-zoom{transform:scale(.94) rotate(.2deg);filter:blur(3px)}
-.reveal-fade{transform:none}
-.reveal-up.is-visible{animation:popUp .85s var(--ease-out-back) forwards}
-.reveal-right.is-visible{animation:slideRight .9s var(--ease-out-back) forwards}
-.reveal-zoom.is-visible{animation:zoomIn .9s var(--ease-out-back) forwards}
-.reveal-fade.is-visible{animation:fadeIn .7s var(--ease-out) forwards}
-@keyframes popUp{0%{opacity:0;transform:translateY(28px) scale(.98)}60%{opacity:1;transform:translateY(-6px) scale(1.02)}100%{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes slideRight{0%{opacity:0;transform:translateX(32px) scale(.98)}60%{opacity:1;transform:translateX(-6px) scale(1.01)}100%{opacity:1;transform:translateX(0) scale(1)}}
-@keyframes zoomIn{0%{opacity:0;transform:scale(.94) rotate(.2deg);filter:blur(3px)}60%{opacity:1;transform:scale(1.02);filter:blur(0)}100%{opacity:1;transform:scale(1)}}
-@keyframes fadeIn{0%{opacity:0}100%{opacity:1}}
-
 .scroll-progress{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:left center;transform:scaleX(0);background:linear-gradient(90deg,var(--accent),var(--primary));box-shadow:0 2px 12px rgb(56 189 248 / .35);z-index:999;pointer-events:none;transition:transform .15s linear}
 .btn .ripple{position:absolute;left:0;top:0;width:20px;height:20px;background:rgb(255 255 255 / .35);border-radius:50%;transform:translate(-50%,-50%) scale(0);pointer-events:none;animation:ripple .6s ease-out forwards;mix-blend-mode:screen}
 @keyframes ripple{to{transform:translate(-50%,-50%) scale(14);opacity:0}}
 
-/* Carrossel dos planos */
+/* Carrossel dos planos (mantido) */
 .plans-wrap{position:relative;margin-top:36px}
 .plans-rail{display:flex !important;justify-content:center;align-items:stretch;gap:18px;perspective:1200px}
 .plans-rail .card{position:relative;flex:0 0 clamp(280px,30vw,360px);transform:translateZ(0) scale(.92);opacity:.88;filter:saturate(.9);transition:transform .55s cubic-bezier(.34,1.56,.64,1),opacity .45s var(--ease-out),box-shadow .5s var(--ease-out),filter .45s var(--ease-out),border-color .35s;order:0}
@@ -187,17 +161,17 @@ footer{border-top:1px solid var(--border);padding:24px 0;color:rgb(182,194,207)}
 @keyframes centerPop{0%{transform:translateY(18px) scale(.92);opacity:.4}60%{transform:translateY(-12px) scale(1.12);opacity:1}100%{transform:translateY(-10px) scale(1.09)}}
 @keyframes centerGlow{0%{opacity:0;transform:scale(.9)}40%{opacity:.9;transform:scale(1.02)}100%{opacity:0;transform:scale(1.12)}}
 .plans-rail .card.center-enter{animation:centerPop .78s var(--ease-out-back) both}
-.plans-rail .card.is-center::after{content:"";position:absolute;inset:-2px;border-radius:var(--radius);background:radial-gradient(60% 60% at 50% 50%, rgb(56 189 248 / .18), rgb(34 197 94 / .16) 45%, rgb(255 255 255 / 0) 65%);opacity:0;pointer-events:none}
+.plans-rail .card.is-center::after{content:"";position:absolute;inset:-2px;border-radius:var(--radius);background:radial-gradient(60% 60% at 50% 50%, rgb(56 189 248 / .18), rgb(34 197 94 / .16) 45%, transparent 65%);opacity:0;pointer-events:none}
 .plans-rail .card.center-enter::after{animation:centerGlow 1s ease-out .05s both}
-.plans-rail .card.is-left{transform:translateX(-12px) translateY(2px) rotateY(-14deg) scale(.9);opacity:.85;filter:saturate(.88)}
-.plans-rail .card.is-right{transform:translateX(12px) translateY(2px) rotateY(14deg) scale(.9);opacity:.85;filter:saturate(.88)}
+.plans-rail .card.is-left{transform:translateX(-12px) translateY(2px) rotateY(-14deg) scale(.9)}
+.plans-rail .card.is-right{transform:translateX(12px) translateY(2px) rotateY(14deg) scale(.9)}
 @media (min-width:981px){ .plans-rail .card:hover{transform:translateY(-14px) scale(1.12);box-shadow:0 32px 84px rgb(0 0 0 / .6)} }
-.plans-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;display:grid;place-items:center;background:var(--surface-900);color:var(--lead);border:1px solid var(--border);border-radius:999px;box-shadow:0 12px 34px rgb(0 0 0 / .35);cursor:pointer;user-select:none;transition:transform .22s var(--ease-out),background-color .2s,color .2s;z-index:5}
-.plans-nav:hover{transform:translateY(-50%) scale(1.06);background:var(--surface-850);color:rgb(255,255,255)}
+.plans-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;display:grid;place-items:center;background:rgb(11,22,34);color:var(--lead);border:1px solid var(--border);border-radius:999px;box-shadow:0 12px 34px rgb(0 0 0 / .35);cursor:pointer;user-select:none;transition:transform .22s var(--ease-out),background-color .2s,color .2s;z-index:5}
+.plans-nav:hover{transform:translateY(-50%) scale(1.06);background:rgb(13,26,41);color:rgb(255,255,255)}
 .plans-nav.prev{left:-6px}
 .plans-nav.next{right:-6px}
 .plans-dots{display:flex;justify-content:center;gap:8px;margin-top:12px}
-.plans-dots .dot{width:8px;height:8px;border-radius:999px;background:var(--surface-800);border:1px solid var(--border);opacity:.7;transition:transform .2s,background .2s,opacity .2s,box-shadow .2s}
+.plans-dots .dot{width:8px;height:8px;border-radius:999px;background:rgb(15,27,40);border:1px solid var(--border);opacity:.7;transition:transform .2s,background .2s,opacity .2s,box-shadow .2s}
 .plans-dots .dot:hover{transform:scale(1.1);opacity:1}
 .plans-dots .dot.is-active{background:var(--primary);opacity:1;box-shadow:0 0 0 4px rgb(34 197 94 / .2);transform:scale(1.2)}
 @media (max-width:980px){
@@ -206,6 +180,29 @@ footer{border-top:1px solid var(--border);padding:24px 0;color:rgb(182,194,207)}
   .plans-nav.prev{left:8px}
   .plans-nav.next{right:8px}
 }
-@media (prefers-reduced-motion:reduce){
-  .plans-rail .card{transition:none !important}
+
+/* Reduzir espaço entre o hero e a seção Planos */
+.hero{ margin-bottom: 0; }
+
+/* Desktop: não forçar o hero a tela cheia e dar menos respiro embaixo */
+@media (min-width: 981px){
+  .hero{
+    min-height: auto;      /* para de ocupar a viewport inteira no desktop */
+    padding-top: 48px;     /* ajuste fino em cima */
+    padding-bottom: 12px;  /* menos espaço embaixo */
+  }
+  /* Se quiser ainda mais compacto, troque por 8px */
+  #planos{ padding-top: 18px; }  /* era 40px pelo padrão de section */
+}
+
+/* Tablets (768–980): também compacta um pouco o gap */
+@media (min-width: 768px) and (max-width: 980px){
+  .hero{ padding-bottom: 16px; }
+  #planos{ padding-top: 16px; }
+}
+
+/* Mobile: mantém tela cheia, mas com menos respiro embaixo */
+@media (max-width: 767px){
+  .hero{ padding-bottom: 12px; }
+  #planos{ padding-top: 12px; }
 }

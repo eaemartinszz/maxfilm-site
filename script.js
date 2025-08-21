@@ -2,19 +2,36 @@
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-// Ajusta --vh (altura real da viewport) e --header-h (altura do header)
+// Ajusta --vh100 (altura real de viewport) e --header-h (altura do header)
 (function(){
   const root = document.documentElement;
   const header = document.querySelector('header');
 
-  function setVH(){ root.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px'); }
-  function setHeaderH(){ root.style.setProperty('--header-h', (header ? header.offsetHeight : 0) + 'px'); }
+  function setHeaderH(){
+    const h = header ? Math.round(header.getBoundingClientRect().height) : 0;
+    root.style.setProperty('--header-h', h + 'px');
+  }
+  function setVH(){
+    // Usa visualViewport quando existir (iOS Safari atualiza com a barra subindo/descendo)
+    const h = (window.visualViewport && window.visualViewport.height) ? window.visualViewport.height : window.innerHeight;
+    root.style.setProperty('--vh100', h + 'px');
+  }
 
-  ['load','resize','orientationchange'].forEach(evt => window.addEventListener(evt, () => { setVH(); setHeaderH(); }));
-  setTimeout(() => { setVH(); setHeaderH(); }, 120); // ajuste extra p/ iOS
+  function updateAll(){ setHeaderH(); setVH(); }
+
+  // Eventos que realmente disparam no iOS
+  window.addEventListener('load', updateAll, { passive:true });
+  window.addEventListener('resize', updateAll, { passive:true });
+  window.addEventListener('orientationchange', updateAll, { passive:true });
+  if (window.visualViewport){
+    window.visualViewport.addEventListener('resize', setVH, { passive:true });
+    window.visualViewport.addEventListener('scroll', setVH, { passive:true });
+  }
+  // Ajuste extra após o load (quando a barra do Safari recolhe)
+  setTimeout(updateAll, 400);
 })();
 
-// Animações (mesmas do pacote anterior, resumidas)
+// Animações leves (mantidas)
 (function(){
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (prefersReduced) return;
@@ -35,86 +52,6 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
     rafScroll = requestAnimationFrame(updateBar);
   }, { passive: true });
   updateBar();
-
-  // Reveal
-  function addReveal(selector, cls = 'reveal-up', { stagger = 120, startDelay = 0 } = {}){
-    const els = document.querySelectorAll(selector);
-    els.forEach((el, i) => {
-      el.classList.add(cls);
-      el.style.animationDelay = `${startDelay + i * stagger}ms`;
-      observe(el);
-    });
-  }
-  const io = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if(entry.isIntersecting){
-        entry.target.classList.add('is-visible');
-        io.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' }) : null;
-  function observe(el){ io ? io.observe(el) : el.classList.add('is-visible'); }
-
-  addReveal('.hero .kicker','reveal-up',{startDelay:40});
-  addReveal('.hero h1','reveal-up',{startDelay:120});
-  addReveal('.hero .lead','reveal-fade',{startDelay:220});
-  addReveal('.hero .hero-cta','reveal-up',{startDelay:260,stagger:120});
-  addReveal('.hero .badges .badge','reveal-up',{startDelay:300,stagger:90});
-  addReveal('.hero .illus','reveal-zoom',{startDelay:200});
-  addReveal('#planos .card','reveal-up',{stagger:140});
-  addReveal('#como-funciona .step','reveal-up',{stagger:120});
-  addReveal('#vantagens .item','reveal-up',{stagger:120});
-  addReveal('#conformidade .features li','reveal-up',{stagger:80});
-  addReveal('#faq details','reveal-right',{stagger:100});
-  addReveal('#contato .cta .btn','reveal-up',{stagger:110});
-  addReveal('footer .brand','reveal-fade',{startDelay:120});
-  addReveal('footer .links a','reveal-up',{stagger:60});
-  addReveal('footer .legal','reveal-fade',{startDelay:220});
-
-  // Tilt + parallax na vitrine
-  const illus = document.querySelector('.illus');
-  const media = document.querySelector('.illus-media');
-  if (illus){
-    let raf;
-    illus.addEventListener('mousemove', (e) => {
-      const r = illus.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - 0.5;
-      const y = (e.clientY - r.top) / r.height - 0.5;
-      const rx = (-y * 7).toFixed(2);
-      const ry = (x * 7).toFixed(2);
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        illus.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
-        if (media){ media.style.transform = `translate3d(${ry * 1.5}px, ${rx * 1.5}px, 0) scale(1.03)`; }
-      });
-    });
-    illus.addEventListener('mouseleave', () => {
-      illus.style.transform = 'none';
-      if (media) media.style.transform = 'none';
-    });
-    let rafParallax;
-    window.addEventListener('scroll', () => {
-      if (!media) return;
-      cancelAnimationFrame(rafParallax);
-      rafParallax = requestAnimationFrame(() => {
-        const y = window.scrollY * 0.06;
-        media.style.transform = `translate3d(0, ${y}px, 0)`;
-      });
-    }, { passive: true });
-  }
-
-  // Ripple
-  document.querySelectorAll('.btn').forEach(b => {
-    b.addEventListener('click', (e) => {
-      const rect = b.getBoundingClientRect();
-      const ripple = document.createElement('span');
-      ripple.className = 'ripple';
-      ripple.style.left = `${e.clientX - rect.left}px`;
-      ripple.style.top = `${e.clientY - rect.top}px`;
-      b.appendChild(ripple);
-      ripple.addEventListener('animationend', () => ripple.remove());
-    });
-  });
 })();
 
 // Carrossel dos planos (FLIP + autoplay)
@@ -130,9 +67,7 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
   const dots = Array.from(wrap.querySelectorAll('.plans-dots .dot'));
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  let active = 1;
-  let prevActive = active;
-  let autoTimer = null;
+  let active = 1, prevActive = 1, autoTimer = null;
   const interval = parseInt(wrap.getAttribute('data-autoplay') || '6000', 10);
 
   function flipAnimate(elements, mutate){
@@ -155,7 +90,7 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
     const n = cards.length;
     flipAnimate(cards, () => {
       cards.forEach((card, i) => {
-        const pos = (i - active + n) % n; // 0=left,1=center,2=right
+        const pos = (i - active + n) % n; // 0=left, 1=center, 2=right
         card.style.order = String(pos);
         card.classList.toggle('is-center', pos === 1);
         card.classList.toggle('is-left',   pos === 0);
@@ -200,8 +135,7 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
     });
   });
 
-  const alwaysOn = wrap.dataset.autoAlways === 'true';
-  function startAuto(){ if (prefersReduced || autoTimer) return; autoTimer = setInterval(() => rotate(1), interval); }
+  function startAuto(){ if (!prefersReduced && !autoTimer) autoTimer = setInterval(() => rotate(1), interval); }
   function stopAuto(){ if (autoTimer) { clearInterval(autoTimer); autoTimer = null; } }
   function restartAuto(){ stopAuto(); startAuto(); }
 
@@ -210,14 +144,7 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
   wrap.addEventListener('focusin', stopAuto);
   wrap.addEventListener('focusout', startAuto);
 
-  if (alwaysOn){ setTimeout(startAuto, 600); }
-  else {
-    const section = document.getElementById('planos')?.closest('section') || document.getElementById('planos');
-    const io = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
-      entries.forEach(entry => entry.isIntersecting ? startAuto() : stopAuto());
-    }, { threshold: 0.2 }) : null;
-    io?.observe(section || wrap);
-  }
-
+  // Sempre ligado
+  setTimeout(startAuto, 600);
   apply();
 })();
