@@ -247,3 +247,8 @@ main{ flex:1 0 auto; }
   section{ padding-block: clamp(20px, 6vh, 40px); }
   .container{ padding-left:16px; padding-right:16px; }
 }
+
+@media (max-width: 980px){
+  .hero{ display:flex; align-items:center; }
+  .hero-inner{ width:100%; }
+}
