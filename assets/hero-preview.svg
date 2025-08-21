@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Prévia visual com dispositivos e interface de streaming">
+  <defs>
+    <!-- Gradientes -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#0e1726"/>
+    </linearGradient>
+    <radialGradient id="glowGreen" cx="0.5" cy="0.2" r="0.6">
+      <stop offset="0" stop-color="#22c55e" stop-opacity=".45"/>
+      <stop offset=".6" stop-color="#22c55e" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#22c55e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowCyan" cx="0.1" cy="0.0" r="0.7">
+      <stop offset="0" stop-color="#38bdf8" stop-opacity=".40"/>
+      <stop offset=".6" stop-color="#38bdf8" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="screenGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#0d1a2b"/>
+    </linearGradient>
+    <linearGradient id="tileGreen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="tileBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="tilePurple" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <!-- Sombra suave -->
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#000000" flood-opacity=".45"/>
+    </filter>
+    <!-- Brilho difuso -->
+    <filter id="softBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="60"/>
+    </filter>
+    <!-- Grid sutil -->
+    <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M80 0H0V80" fill="none" stroke="#ffffff" stroke-opacity=".05" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Fundo com gradiente e brilhos -->
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#grid)"/>
+  <ellipse cx="1400" cy="60" rx="520" ry="360" fill="url(#glowGreen)" filter="url(#softBlur)"/>
+  <ellipse cx="320" cy="40" rx="560" ry="380" fill="url(#glowCyan)" filter="url(#softBlur)"/>
+
+  <!-- TV principal -->
+  <g filter="url(#softShadow)">
+    <!-- Corpo da TV -->
+    <rect x="190" y="110" width="1220" height="680" rx="26" fill="#0f1720" stroke="#1b2733" stroke-width="2"/>
+    <!-- Tela -->
+    <rect x="210" y="130" width="1180" height="640" rx="18" fill="url(#screenGrad)" stroke="#192533" stroke-width="1"/>
+    <!-- Barra superior da interface -->
+    <g opacity=".9">
+      <rect x="210" y="130" width="1180" height="64" rx="18" fill="#0e1a2a"/>
+      <circle cx="244" cy="162" r="6" fill="#22c55e"/>
+      <circle cx="264" cy="162" r="6" fill="#38bdf8"/>
+      <circle cx="284" cy="162" r="6" fill="#f59e0b"/>
+      <rect x="340" y="150" width="140" height="24" rx="6" fill="#132435"/>
+      <rect x="500" y="150" width="100" height="24" rx="6" fill="#132435" opacity=".8"/>
+    </g>
+
+    <!-- Grelha de conteúdos (3 linhas x 4 colunas) -->
+    <!-- Linha 1 -->
+    <rect x="235" y="220" width="260" height="140" rx="16" fill="url(#tileGreen)"/>
+    <rect x="525" y="220" width="260" height="140" rx="16" fill="url(#tileBlue)"/>
+    <rect x="815" y="220" width="260" height="140" rx="16" fill="url(#tilePurple)"/>
+    <rect x="1105" y="220" width="260" height="140" rx="16" fill="url(#tileGreen)"/>
+
+    <!-- Linha 2 -->
+    <rect x="235" y="380" width="260" height="140" rx="16" fill="url(#tileBlue)"/>
+    <rect x="525" y="380" width="260" height="140" rx="16" fill="url(#tilePurple)"/>
+    <rect x="815" y="380" width="260" height="140" rx="16" fill="url(#tileGreen)"/>
+    <rect x="1105" y="380" width="260" height="140" rx="16" fill="url(#tileBlue)"/>
+
+    <!-- Linha 3 -->
+    <rect x="235" y="540" width="260" height="140" rx="16" fill="url(#tilePurple)"/>
+    <rect x="525" y="540" width="260" height="140" rx="16" fill="url(#tileGreen)"/>
+    <rect x="815" y="540" width="260" height="140" rx="16" fill="url(#tileBlue)"/>
+    <rect x="1105" y="540" width="260" height="140" rx="16" fill="url(#tilePurple)"/>
+
+    <!-- Títulos/legendas sob os cards (linhas) -->
+    <g opacity=".6">
+      <rect x="235" y="684" width="160" height="10" rx="5" fill="#1b2b40"/>
+      <rect x="525" y="684" width="140" height="10" rx="5" fill="#1b2b40"/>
+      <rect x="815" y="684" width="180" height="10" rx="5" fill="#1b2b40"/>
+      <rect x="1105" y="684" width="120" height="10" rx="5" fill="#1b2b40"/>
+    </g>
+  </g>
+
+  <!-- Tablet lateral (esquerda) -->
+  <g filter="url(#softShadow)" opacity=".95">
+    <rect x="110" y="440" width="380" height="250" rx="22" fill="#0f1720" stroke="#1b2733" stroke-width="2"/>
+    <rect x="130" y="460" width="340" height="210" rx="14" fill="url(#screenGrad)" stroke="#192533" stroke-width="1"/>
+    <rect x="150" y="480" width="140" height="90" rx="12" fill="url(#tileBlue)"/>
+    <rect x="300" y="480" width="150" height="90" rx="12" fill="url(#tileGreen)"/>
+    <rect x="150" y="585" width="80" height="14" rx="7" fill="#1b2b40"/>
+    <rect x="240" y="585" width="110" height="14" rx="7" fill="#1b2b40"/>
+    <rect x="360" y="585" width="60" height="14" rx="7" fill="#1b2b40"/>
+  </g>
+
+  <!-- Smartphone lateral (direita) -->
+  <g filter="url(#softShadow)" opacity=".95">
+    <rect x="1240" y="430" width="180" height="320" rx="30" fill="#0f1720" stroke="#1b2733" stroke-width="2"/>
+    <rect x="1258" y="460" width="144" height="260" rx="18" fill="url(#screenGrad)" stroke="#192533" stroke-width="1"/>
+    <rect x="1268" y="472" width="124" height="80" rx="12" fill="url(#tilePurple)"/>
+    <rect x="1268" y="560" width="124" height="18" rx="9" fill="#1b2b40"/>
+    <rect x="1268" y="584" width="100" height="18" rx="9" fill="#1b2b40"/>
+    <rect x="1268" y="608" width="76" height="18" rx="9" fill="#1b2b40"/>
+  </g>
+
+  <!-- Glow sutil no rodapé -->
+  <ellipse cx="800" cy="860" rx="520" ry="80" fill="#22c55e" opacity=".12" filter="url(#softBlur)"/>
+</svg>
